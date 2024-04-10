@@ -1,0 +1,87 @@
+{\rtf1\ansi\deff0 {\fonttbl{\f0\fnil Garamond;}}
+{\info {\author .}{\company .}{\title .}}
+\deflang1033\plain\fs20
+{\footer\pard\qc\plain\f0\fs20\chpgn\par}
+{
+{
+{\b\qc\line Estadisticas descriptivas para base Panel_V3 }{\par}
+\trowd\trgaph108\trleft-108\clbrdrt\brdrw10\brdrs \clbrdrb\brdrw25\brdrs\cellx3000\clbrdrt\brdrw10\brdrs \clbrdrb\brdrw25\brdrs\cellx3800\clbrdrt\brdrw10\brdrs \clbrdrb\brdrw25\brdrs\cellx5200\clbrdrt\brdrw10\brdrs \clbrdrb\brdrw25\brdrs\cellx6600\clbrdrt\brdrw10\brdrs \clbrdrb\brdrw25\brdrs\cellx8000\clbrdrt\brdrw10\brdrs \clbrdrb\brdrw25\brdrs\cellx9400
+\ql { {Variable}}\cell
+\qr { {Obs}}\cell
+\qr { {Mean}}\cell
+\qr { {Std. Dev.}}\cell
+\qr { {Min}}\cell
+\qr { {Max}}\cell
+\row
+\trowd\trgaph108\trleft-108\cellx3000\cellx3800\cellx5200\cellx6600\cellx8000\cellx9400
+\ql { {Ataque violento}}\cell
+\qr {{16545}}\cell
+\qr {{7.418}}\cell
+\qr {{36.403}}\cell
+\qr {{0}}\cell
+\qr {{1963}}\cell
+\row
+\ql { {Votos partido liberal}}\cell
+\qr {{13994}}\cell
+\qr {{1530.875}}\cell
+\qr {{7381.57}}\cell
+\qr {{0}}\cell
+\qr {{375284}}\cell
+\row
+\ql { {Votos partido liberal}}\cell
+\qr {{13994}}\cell
+\qr {{1103.448}}\cell
+\qr {{3517.941}}\cell
+\qr {{0}}\cell
+\qr {{159209}}\cell
+\row
+\ql { {Votos partido nuevo liberalismo}}\cell
+\qr {{13994}}\cell
+\qr {{37.926}}\cell
+\qr {{1488.139}}\cell
+\qr {{0}}\cell
+\qr {{167711}}\cell
+\row
+\ql { {Votos otros partidos/movimientos}}\cell
+\qr {{13994}}\cell
+\qr {{56.492}}\cell
+\qr {{1376.075}}\cell
+\qr {{0}}\cell
+\qr {{137661}}\cell
+\row
+\ql { {Votos partido alianza popular AN}}\cell
+\qr {{13994}}\cell
+\qr {{84.409}}\cell
+\qr {{1040.827}}\cell
+\qr {{0}}\cell
+\qr {{74098}}\cell
+\row
+\ql { {Votos union patriotica}}\cell
+\qr {{13994}}\cell
+\qr {{27.575}}\cell
+\qr {{466.555}}\cell
+\qr {{0}}\cell
+\qr {{34647}}\cell
+\row
+\ql { {Votos partido patria nueva}}\cell
+\qr {{13994}}\cell
+\qr {{2.427}}\cell
+\qr {{231.933}}\cell
+\qr {{0}}\cell
+\qr {{27098}}\cell
+\row
+\ql { {Votos en blanco}}\cell
+\qr {{13994}}\cell
+\qr {{195.864}}\cell
+\qr {{3791.996}}\cell
+\qr {{0}}\cell
+\qr {{255292}}\cell
+\row
+}
+{\trowd\trgaph108\trleft-108
+\clbrdrt\brdrw15\brdrs\cellx9400{}\cell
+\row}
+
+
+\writepositionforappend
+}}
