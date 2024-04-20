@@ -186,6 +186,46 @@ coefplot coefs_i, omitted														///
 
 
 
+********************           Voting Ratios                  ******************  
+
+gen R_ConsTotal = PARTIDOCONSERVADORCOLOMBIANO / VotoTotal
+gen R_LibTotal = PARTIDOLIBERALCOLOMBIANO / VotoTotal
+gen R_BlancoTotal = VOTOSENBLANCO / VotoTotal
+gen R_ConsLib = PARTIDOCONSERVADORCOLOMBIANO / PARTIDOLIBERALCOLOMBIANO
+
+gen L_ConsTotal = log(R_ConsTotal)
+gen L_LibTotal = log(R_LibTotal)
+gen L_BlancoTotal = log(R_BlancoTotal)
+gen L_ConsLib = log(R_ConsLib)
+
+
+// Event Study – TWFE
+reghdfe L_ConsLib evt_l14 evt_l13 evt_l12 evt_l11 evt_l10 evt_l9 evt_l8 evt_l7 evt_l6 evt_l5 evt_l4 evt_l3 evt_l2 evt_l1 evt_f0 evt_f1 evt_f2 evt_f3 evt_f4 evt_f5 evt_f6 evt_f7 evt_f8 evt_f9 evt_f10 evt_f11 evt_f12 evt_f13 evt_f14, abs(id year) vce(cluster id)
+	estimates store coefs_i 
+
+*) Graph
+coefplot coefs_i, omitted														///
+	vertical 																	///
+	label drop(_cons)															///
+	yline(0, lpattern(dash) lwidth(*0.5))   							 		///
+	ytitle("Votos Totales (log)")                              ///
+	xtitle("Años Relativo al Ataque", size(medsmall))			 		        ///
+	xlabel(, labsize(small) nogextend labc(black)) 	 				 			///
+	ylabel(,nogrid nogextend labc(black) format(%9.2f)) 				 		///
+	msymbol(O) 														 			///
+	mlcolor(black) 													 			///
+	mfcolor(black) 													 			///
+	msize(vsmall) 													 			///
+	levels(95) 														 			///
+	xline(13, lpattern(dash) lwidth(*0.5))										///
+	ciopts(lcol(black) recast(rcap) lwidth(*0.8)) 					 			///
+	plotregion(lcolor(black) fcolor(white))  							 		///
+	graphregion(lcolor(black) fcolor(white))  						 			///
+	yscale(lc(black)) 												 			///
+	xscale(lc(black)) 												 			///
+	name(TWFE3, replace)
+
+
 
 **# BIG TAKEAWAY #3:
 /*
@@ -195,6 +235,8 @@ the same.
 
 */
 
+
+ 
 
 
 

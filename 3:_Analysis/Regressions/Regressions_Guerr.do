@@ -65,7 +65,7 @@ destring id, gen(code)
 xtset code year
 
 /// Violence indicator
-gen D_violencia = (Violencia != 0)
+gen D_violencia = (V_Guerrilla != 0)
 
 
 sort id year
@@ -146,7 +146,7 @@ coefplot coefs_i, omitted														///
 *--> Effect! Violence on municipalities decreases Conservative votes
  
  
- 
+
 
 ********************           Voter Turnout                  ******************  
 
@@ -175,14 +175,12 @@ coefplot coefs_i, omitted														///
 	msize(vsmall) 													 			///
 	levels(95) 														 			///
 	xline(11, lpattern(dash) lwidth(*0.5))										///
-	ciopts(lcol(black) recast(rcap) lwidth(*0.8)) 					 			///
+	ciopts(lcol(black) recast(rcap) lidth(*0.8)) 					 			///
 	plotregion(lcolor(black) fcolor(white))  							 		///
 	graphregion(lcolor(black) fcolor(white))  						 			///
 	yscale(lc(black)) 												 			///
 	xscale(lc(black)) 												 			///
 	name(TWFE3, replace)
- graph export "/Users/edmundoarias/Documents/Uniandes/2024-10/HEC/Political-Attitudes/4:_Output/Results/Extended/TWFE_Total.pdf", replace
-*--> Effect! Violence on municipalities decreases voter turnout
 
 
 
@@ -195,6 +193,8 @@ the same.
 
 */
 
+
+ 
 
 
 

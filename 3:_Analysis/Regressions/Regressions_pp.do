@@ -55,7 +55,7 @@ graph set window fontface "Garamond"
 ********************************************************************************
 
 /// Import dataset
-use "/Users/edmundoarias/Documents/Uniandes/2024-10/HEC/Political-Attitudes/2:_ProcessedData/MergedData/Final/Panel_v3.dta", clear
+use "/Users/edmundoarias/Documents/Uniandes/2024-10/HEC/Political-Attitudes/2:_ProcessedData/MergedData/Final/Political Participation/Panel_vPP.dta", clear
 
 // Gen Sequental year variable for simplicity
 egen year = group(periodo)
@@ -81,21 +81,21 @@ tab Dit
 gen rel_time=year-firsttreat
 
 tab rel_time, gen(evt) // dummies for each period
- *-> I have 14 leads & 14 lags !
+ *-> I have 4 leads & 4 lags !
  
 
 	 ** Leads
-	forvalues x = 1/14 {
+	forvalues x = 1/4 {
 		
-		local j= 15-`x'
+		local j= 5-`x'
 		ren evt`x' evt_l`j'
 		cap label var evt_l`j' "-`j'" 
 	}
 
 	**  Lags
-	forvalues x = 0/14 {
+	forvalues x = 0/4 {
 		
-		local j= 15+`x'
+		local j= 5+`x'
 		ren evt`j' evt_f`x'
 		cap label var evt_f`x' "`x'"  
 	}
@@ -112,13 +112,15 @@ replace evt_l1=0
 ********************************************************************************
 
 
-********************           Voto Conservador               ******************  
+********************      Participacion Política              ******************  
 
-/// Define as logarithm: easier to interpret and more effective to capture an effect
-gen VotoCons = log(PARTIDOCONSERVADORCOLOMBIANO)
+egen VotoTotal = rowtotal(PARTIDOLIBERALCOLOMBIANO PARTIDOCONSERVADORCOLOMBIANO PARTIDOCAMBIORADICALCOLOMBIAN PARTIDOCOLOMBIADEMOCRATICA censoe_mujeres censoe_hombres censoe_total PARTIDOSOCIALDEUNIDADNACIONA PARTIDOCENTRODEMOCRATICOMAN PARTIDOCOLOMBIAHUMANAYUNION PARTIDOALIANZAVERDE POLODEMOCRATICOINDEPENDIENTE VOTOSENBLANCO)
+
+gen PartAll = VotoTotal / censoe_total
+
 
 /// Event Study – TWFE
-reghdfe VotoCons evt_l11 evt_l10 evt_l9 evt_l8 evt_l7 evt_l6 evt_l5 evt_l4 evt_l3 evt_l2 evt_l1 evt_f0 evt_f1 evt_f2 evt_f3 evt_f4 evt_f5 evt_f6 evt_f7 evt_f8 evt_f9 evt_f10 evt_f11 , abs(id year) vce(cluster id)
+reghdfe PartAll evt_l4 evt_l3 evt_l2 evt_l1 evt_f0 evt_f1 evt_f2, abs(id year) vce(cluster id)
 	estimates store coefs_i 
 
 *) Graph
@@ -126,7 +128,7 @@ coefplot coefs_i, omitted														///
 	vertical 																	///
 	label drop(_cons)															///
 	yline(0, lpattern(dash) lwidth(*0.5))   							 		///
-	ytitle("Votos hacia el Partido Conservador (log)")                          ///
+	ytitle("Votos Totales sobre Censo Total")                          ///
 	xtitle("Años Relativo al Ataque", size(medsmall))			 		        ///
 	xlabel(, labsize(small) nogextend labc(black)) 	 				 			///
 	ylabel(,nogrid nogextend labc(black) format(%9.2f)) 				 		///
@@ -135,7 +137,7 @@ coefplot coefs_i, omitted														///
 	mfcolor(black) 													 			///
 	msize(vsmall) 													 			///
 	levels(95) 														 			///
-	xline(11, lpattern(dash) lwidth(*0.5))										///
+	xline(4, lpattern(dash) lwidth(*0.5))										///
 	ciopts(lcol(black) recast(rcap) lwidth(*0.8)) 					 			///
 	plotregion(lcolor(black) fcolor(white))  							 		///
 	graphregion(lcolor(black) fcolor(white))  						 			///
@@ -148,16 +150,111 @@ coefplot coefs_i, omitted														///
  
  
 
-********************           Voter Turnout                  ******************  
+*************   Participacion Política vs Violencia del Estado    **************  
 
-/// Define Total Votes
-egen VotoTotal = rowtotal(PARTIDOLIBERALCOLOMBIANO PARTIDOCONSERVADORCOLOMBIANO MOVIMIENTONUEVOLIBERALISMO OTROSPARTIDOOMOVIMIENTOS ALIANZANALPOPULARANAPO UNIONPATRIOTICAUP PARTIDOPATRIANUEVA VOTOSENBLANCO VOTOSNULOS)
+/// Import dataset
+use "/Users/edmundoarias/Documents/Uniandes/2024-10/HEC/Political-Attitudes/2:_ProcessedData/MergedData/Final/Political Participation/Panel_vPP.dta", clear
 
-/// Set as logarithm
-gen l_VotoTotal = log(VotoTotal)
+// Gen Sequental year variable for simplicity
+egen year = group(periodo)
+
+/// Declare panel
+destring id, gen(code)
+xtset code year
+
+/// Violence indicator
+gen D_violencia = (V_GruposArma != 0)
+
+
+sort id year
+/// Gen First-Treat variable: year of first 'violencia'
+by id: egen firsttreat = min(cond(D_violencia == 1, year, .))
+tab firsttreat
+
+/// Create dummy treatment variable specific on date
+gen Dit = (year >= firsttreat & firsttreat!=0)
+tab Dit
+
+/// Create relative periods (t-t_0)
+gen rel_time=year-firsttreat
+
+tab rel_time, gen(evt) // dummies for each period
+ *-> I have 4 leads & 4 lags !
+ 
+
+	 ** Leads
+	forvalues x = 1/4 {
+		
+		local j= 5-`x'
+		ren evt`x' evt_l`j'
+		cap label var evt_l`j' "-`j'" 
+	}
+
+	**  Lags
+	forvalues x = 0/4 {
+		
+		local j= 5+`x'
+		ren evt`j' evt_f`x'
+		cap label var evt_f`x' "`x'"  
+	}
+	
+	
+** Base period to be ommited becuase of perfect multicollinearity:
+replace evt_l1=0
+
+
+
+*------ Estimation
+egen VotoTotal = rowtotal(PARTIDOLIBERALCOLOMBIANO PARTIDOCONSERVADORCOLOMBIANO PARTIDOCAMBIORADICALCOLOMBIAN PARTIDOCOLOMBIADEMOCRATICA censoe_mujeres censoe_hombres censoe_total PARTIDOSOCIALDEUNIDADNACIONA PARTIDOCENTRODEMOCRATICOMAN PARTIDOCOLOMBIAHUMANAYUNION PARTIDOALIANZAVERDE POLODEMOCRATICOINDEPENDIENTE VOTOSENBLANCO)
+
+gen PartAll = VotoTotal / censoe_total
+
 
 /// Event Study – TWFE
-reghdfe l_VotoTotal evt_l11 evt_l10 evt_l9 evt_l8 evt_l7 evt_l6 evt_l5 evt_l4 evt_l3 evt_l2 evt_l1 evt_f0 evt_f1 evt_f2 evt_f3 evt_f4 evt_f5 evt_f6 evt_f7 evt_f8 evt_f9 evt_f10 evt_f11, abs(id year) vce(cluster id)
+reghdfe PartAll evt_l4 evt_l3 evt_l2 evt_l1 evt_f0 evt_f1 evt_f2, abs(id year) vce(cluster id)
+	estimates store coefs_i 
+
+*) Graph
+coefplot coefs_i, omitted														///
+	vertical 																	///
+	label drop(_cons)															///
+	yline(0, lpattern(dash) lwidth(*0.5))   							 		///
+	ytitle("Votos Totales sobre Censo Total")                          ///
+	xtitle("Años Relativo al Ataque (por el Estado)", size(medsmall))			 		        ///
+	xlabel(, labsize(small) nogextend labc(black)) 	 				 			///
+	ylabel(,nogrid nogextend labc(black) format(%9.2f)) 				 		///
+	msymbol(O) 														 			///
+	mlcolor(black) 													 			///
+	mfcolor(black) 													 			///
+	msize(vsmall) 													 			///
+	levels(95) 														 			///
+	xline(4, lpattern(dash) lwidth(*0.5))										///
+	ciopts(lcol(black) recast(rcap) lwidth(*0.8)) 					 			///
+	plotregion(lcolor(black) fcolor(white))  							 		///
+	graphregion(lcolor(black) fcolor(white))  						 			///
+	yscale(lc(black)) 												 			///
+	xscale(lc(black)) 												 			///
+	name(TWFE2_1, replace)
+ graph export "/Users/edmundoarias/Documents/Uniandes/2024-10/HEC/Political-Attitudes/4:_Output/Results/Extended/TWFE_Cons.pdf", replace
+*--> Effect! Violence on municipalities decreases Conservative votes
+ 
+
+
+********************           Voting Ratios                  ******************  
+
+gen R_ConsTotal = PARTIDOCONSERVADORCOLOMBIANO / VotoTotal
+gen R_LibTotal = PARTIDOLIBERALCOLOMBIANO / VotoTotal
+gen R_BlancoTotal = VOTOSENBLANCO / VotoTotal
+gen R_ConsLib = PARTIDOCONSERVADORCOLOMBIANO / PARTIDOLIBERALCOLOMBIANO
+
+gen L_ConsTotal = log(R_ConsTotal)
+gen L_LibTotal = log(R_LibTotal)
+gen L_BlancoTotal = log(R_BlancoTotal)
+gen L_ConsLib = log(R_ConsLib)
+
+
+// Event Study – TWFE
+reghdfe L_ConsLib evt_l14 evt_l13 evt_l12 evt_l11 evt_l10 evt_l9 evt_l8 evt_l7 evt_l6 evt_l5 evt_l4 evt_l3 evt_l2 evt_l1 evt_f0 evt_f1 evt_f2 evt_f3 evt_f4 evt_f5 evt_f6 evt_f7 evt_f8 evt_f9 evt_f10 evt_f11 evt_f12 evt_f13 evt_f14, abs(id year) vce(cluster id)
 	estimates store coefs_i 
 
 *) Graph
@@ -174,16 +271,13 @@ coefplot coefs_i, omitted														///
 	mfcolor(black) 													 			///
 	msize(vsmall) 													 			///
 	levels(95) 														 			///
-	xline(11, lpattern(dash) lwidth(*0.5))										///
+	xline(13, lpattern(dash) lwidth(*0.5))										///
 	ciopts(lcol(black) recast(rcap) lwidth(*0.8)) 					 			///
 	plotregion(lcolor(black) fcolor(white))  							 		///
 	graphregion(lcolor(black) fcolor(white))  						 			///
 	yscale(lc(black)) 												 			///
 	xscale(lc(black)) 												 			///
 	name(TWFE3, replace)
- graph export "/Users/edmundoarias/Documents/Uniandes/2024-10/HEC/Political-Attitudes/4:_Output/Results/Extended/TWFE_Total.pdf", replace
-*--> Effect! Violence on municipalities decreases voter turnout
-
 
 
 
@@ -195,6 +289,8 @@ the same.
 
 */
 
+
+ 
 
 
 
