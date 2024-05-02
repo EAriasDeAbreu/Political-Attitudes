@@ -142,9 +142,23 @@ honestdid, pre(1/5) post(6/10) mvec(0.5(0.5)2) coefplot `plotopts' ylabel(, nogr
 
 
 
+*===============================================================================*
 
+* Political Manipulation
+*-------------------------------------------------------------------------------*
 
+egen leftwing = rowtotal(PARTIDOLIBERALCOLOMBIANO MOVIMIENTONUEVOLIBERALISMO)
+egen rightwing = rowtotal(PARTIDOCONSERVADORCOLOMBIANO ALIANZANALPOPULARANAPO UNIONPATRIOTICAUP PARTIDOPATRIANUEVA)
 
+gen L_RminusL = log(RminusL)
+gen L_PartPol = log(PartPol)
+
+gen L_PartPol_Cons = log(PartPol_Cons)
+gen L_PartPol_Lib = log(PartPol_Lib)
+
+reghdfe L_PartPol L_RminusL, abs(code year) vce(cluster code)
+reghdfe L_PartPol_Cons L_RminusL, abs(code year) vce(cluster code)
+reghdfe L_PartPol_Lib L_RminusL, abs(code year) vce(cluster code)
 
 
 
