@@ -105,6 +105,7 @@ tab rel_time, gen(evt) // dummies for each period
 replace evt_l1=0
  
  
+
 ********************************************************************************
 *                                                                              *
 *                                Regressions                                   *
@@ -118,17 +119,19 @@ egen VotoTotal = rowtotal(PARTIDOLIBERALCOLOMBIANO PARTIDOCONSERVADORCOLOMBIANO 
 
 gen PartAll = VotoTotal / censoe_total
 
-
+gen L_PartAll = log(PartAll)
 /// Event Study – TWFE
-reghdfe PartAll evt_l4 evt_l3 evt_l2 evt_l1 evt_f0 evt_f1 evt_f2, abs(id year) vce(cluster id)
+reghdfe L_PartAll evt_l4 evt_l3 evt_l2 evt_l1 evt_f0 evt_f1 evt_f2, abs(id year) vce(cluster id)
 	estimates store coefs_i 
+
+reghdfe L_PartAll Dit, abs(id year) vce(cluster id)
 
 *) Graph
 coefplot coefs_i, omitted														///
 	vertical 																	///
 	label drop(_cons)															///
 	yline(0, lpattern(dash) lwidth(*0.5))   							 		///
-	ytitle("Votos Totales sobre Censo Total")                          ///
+	ytitle("Participación Política")                          ///
 	xtitle("Años Relativo al Ataque", size(medsmall))			 		        ///
 	xlabel(, labsize(small) nogextend labc(black)) 	 				 			///
 	ylabel(,nogrid nogextend labc(black) format(%9.2f)) 				 		///
@@ -144,7 +147,7 @@ coefplot coefs_i, omitted														///
 	yscale(lc(black)) 												 			///
 	xscale(lc(black)) 												 			///
 	name(TWFE2_1, replace)
- graph export "/Users/edmundoarias/Documents/Uniandes/2024-10/HEC/Political-Attitudes/4:_Output/Results/Extended/TWFE_Cons.pdf", replace
+ graph export "/Users/edmundoarias/Documents/Uniandes/2024-10/HEC/Political-Attitudes/4:_Output/Results/Extended/TWFE_pp.pdf", replace
 *--> Effect! Violence on municipalities decreases Conservative votes
  
  
@@ -235,11 +238,11 @@ coefplot coefs_i, omitted														///
 	yscale(lc(black)) 												 			///
 	xscale(lc(black)) 												 			///
 	name(TWFE2_1, replace)
- graph export "/Users/edmundoarias/Documents/Uniandes/2024-10/HEC/Political-Attitudes/4:_Output/Results/Extended/TWFE_Cons.pdf", replace
+ graph export "/Users/edmundoarias/Documents/Uniandes/2024-10/HEC/Political-Attitudes/4:_Output/Results/Extended/TWFE_pp_Otros.pdf", replace
 *--> Effect! Violence on municipalities decreases Conservative votes
  
-
-
+ 
+ 
 ********************           Voting Ratios                  ******************  
 
 gen R_ConsTotal = PARTIDOCONSERVADORCOLOMBIANO / VotoTotal
@@ -290,6 +293,7 @@ the same.
 */
 
 
+reghdfe 
  
 
 
